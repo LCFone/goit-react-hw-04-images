@@ -15,7 +15,7 @@ export function App() {
   const [modal, setModal] = useState({ isOpen: false, modalData: null });
   const [hits, setHits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState(null);
+  // const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [showLoadMore, setShowLoadMore] = useState(false);
