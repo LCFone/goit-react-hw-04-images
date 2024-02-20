@@ -82,7 +82,7 @@ export function App() {
 
       <ImageGallery hits={hits} onOpenModal={onOpenModal} />
 
-      <Loader loading={isLoading} error={error} />
+      {/* <Loader loading={isLoading} error={error} /> */}
 
       {hits.length > 0 && (
         <LoadMore
