@@ -5,7 +5,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';  
 import { Modal } from './Modal/Modal';
-import { Loader } from './Loader/Loader';
 import { LoadMore } from './Button/Button';
 
 import { requestHits } from 'services/api';
@@ -14,16 +13,13 @@ export function App() {
 
   const [modal, setModal] = useState({ isOpen: false, modalData: null });
   const [hits, setHits] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [query, setQuery] = useState('');
   const [showLoadMore, setShowLoadMore] = useState(false);
 
   useEffect(() => {
     const fetchHits = async () => {
-      try {
-        setIsLoading(true);
-        
+      try {        
         const response = await requestHits(query, page);
         
         if (response.hits.length === 0) {
@@ -42,7 +38,6 @@ export function App() {
       } catch (error) {
         toast.error(error.message);
       } finally {
-        setIsLoading(false);
       }
     };
     
