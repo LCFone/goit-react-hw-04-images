@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
-import { ToastContainer } from 'react-toastify';
-import { requestHits } from 'services/api';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import { Searchbar } from './Searchbar/Searchbar';
+import { ImageGallery } from './ImageGallery/ImageGallery';  
+import { Modal } from './Modal/Modal';
 import { Loader } from './Loader/Loader';
 import { LoadMore } from './Button/Button';
-import { Searchbar } from './Searchbar/Searchbar';
-import { ImageGallery } from './ImageGallery/ImageGallery';
-import { Modal } from './Modal/Modal';
+
+import { requestHits } from 'services/api';
 
 export function App() {
+
   const [modal, setModal] = useState({ isOpen: false, modalData: null });
   const [hits, setHits] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,13 +21,16 @@ export function App() {
   const [showLoadMore, setShowLoadMore] = useState(false);
 
   useEffect(() => {
-    if (page === 1 && query === '') {
-      return;
-    }
     const fetchHits = async () => {
       try {
         setIsLoading(true);
+        
         const response = await requestHits(query, page);
+        
+        if (response.hits.length === 0) {
+          toast.error('No results found for this search. Please try again.');
+          return; 
+        }
 
         if (page === 1) {
           setHits(response.hits);
@@ -32,14 +39,16 @@ export function App() {
           setHits(prevHits => [...prevHits, ...response.hits]);
           setShowLoadMore(true);
         }
+
       } catch (error) {
-        setError(error.message);
+        toast.error(error.message);
       } finally {
         setIsLoading(false);
       }
     };
-
+    
     fetchHits();
+    
   }, [query, page]);
 
   const handleSubmit = query => {
@@ -54,24 +63,34 @@ export function App() {
   const onOpenModal = modalData => {
     setModal({
       isOpen: true,
-      modalData: modalData,
+      modalData: modalData
     });
   };
 
   const onCloseModal = () => {
     setModal({
       isOpen: false,
-      modalData: null,
+      modalData: null
     });
   };
 
   return (
     <>
       <Searchbar onSubmit={handleSubmit} />
+      
       <ToastContainer autoClose={4000} />
+
       <ImageGallery hits={hits} onOpenModal={onOpenModal} />
+
       <Loader loading={isLoading} error={error} />
-      <LoadMore handleLoadMore={handleLoadMore} showLoadMore={showLoadMore} />
+
+      {hits.length > 0 && (
+        <LoadMore
+          handleLoadMore={handleLoadMore}
+          showLoadMore={showLoadMore}  
+        />
+      )}
+
       <Modal
         onCloseModal={onCloseModal}
         data={modal.modalData}
@@ -79,4 +98,5 @@ export function App() {
       />
     </>
   );
+
 }
